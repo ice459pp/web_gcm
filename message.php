@@ -9,6 +9,7 @@ post: to_email, from_email, content
 */
 
 $from_email = isset($_POST['from_email'])? trim($_POST['from_email']): '';
+$to_email = isset($_POST['to_email'])? trim($_POST['to_email']): '';
 $content = isset($_POST['content'])? trim($_POST['content']): '';
 
 // type : msg, img, audio
@@ -19,7 +20,7 @@ try {
 	$from_user_email = '';
 	$to_user_rid = '';
 
-	if (empty($from_email) || empty($content)) {
+	if (empty($from_email) || empty($to_email) || empty($content)) {
 		throw new Exception("Parameter error");
 	}
 
@@ -33,7 +34,7 @@ try {
 	}
 
 	// check the to_email exist in users table.
-	$s_u2 = $db->Query("SELECT gcm_registration_id FROM users WHERE user_id = '1' LIMIT 1");
+	$s_u2 = $db->Query("SELECT gcm_registration_id FROM users WHERE email = '" . $to_email . "' LIMIT 1");
 	if ($db->No($s_u2) == 0) {
 		throw new Exception("The user of to_email does not exist");
 	} else {
@@ -60,6 +61,12 @@ try {
     // sending push message to single user
     $gcm->send($to_user_rid, $push->getPush());
 
+    $msgInsert = array(
+    	'rid' => $to_user_rid, 
+    	'message_type' => 'msg', 
+    	'content' => $content, 
+    );
+    $db->Insert('message', $msgInsert);
     $result = array(
     	'content' => $content,
     	'message_type' => $message_type, 

@@ -21,6 +21,12 @@ try {
 				'username' => $user['name'],
 				'email' => $user['email'], 
 			);
+
+			$updateArr = array(
+				'gcm_registration_id' => $gcm_registration_id,
+			);
+
+			$db->update("users", $updateArr, "user_id", $user['user_id']);
 			
 			$jsonArr = array(
 				'status' => 'OK', 
@@ -37,6 +43,10 @@ try {
 		throw new Exception("Parameter error");
 	}	
 } catch (Exception $e) {
+	$result = array(
+		'username' => '',
+		'email' => '', 
+	);
 	$jsonArr = array(
 		'status' => 'ERROR',
 		'result' => $result,
