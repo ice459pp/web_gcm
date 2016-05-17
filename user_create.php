@@ -5,15 +5,14 @@ require_once('libs/gcm/gcm.php');
 require_once('libs/gcm/push.php');
 
 /*
-post: username, userpwd, email, gcm_registration_id
+post: username, userpwd, email
 */
 $username = isset($_POST['username'])? trim($_POST['username']): '';
 $userpwd = isset($_POST['userpwd'])? trim($_POST['userpwd']): '';
 $email = isset($_POST['email'])? trim($_POST['email']): '';
-$gcm_registration_id = isset($_POST['gcm_registration_id'])? trim($_POST['gcm_registration_id']): '';
 $result = array();
 try {
-	if (!empty($username) && !empty($userpwd) && !empty($email) && !empty($gcm_registration_id)) {
+	if (!empty($username) && !empty($userpwd) && !empty($email)) {
 
 		if (!isEmailValid($email)) {
 			throw new Exception("Email invalid");
@@ -30,7 +29,7 @@ try {
 			'name' => $username,
 			'pwd' => $userpwd, 
 			'email' => $email,
-			'gcm_registration_id' => $gcm_registration_id, 
+			'gcm_registration_id' => 'initial', 
 		);
 		
 		$db->Insert('users', $insertArr);
