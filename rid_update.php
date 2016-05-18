@@ -26,6 +26,12 @@ try {
 		);
 
 		$db->update('users', $updateArr, 'user_id', $user_id);
+
+		$insertRecord = array(
+			'user_id' => $user_id,
+		);
+
+		$db->insert('rid_update_record', $insertRecord);
 		
 		$json = array(
 			'status' => 'OK', 
