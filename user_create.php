@@ -37,26 +37,21 @@ try {
 		$last_user_id = $db->last_id();
 
 		// the user of the to_email add the user of from_email as friend
-		$s_rt1 = $db->Query("SELECT * FROM roster 
-				WHERE user_id = '" . $last_user_id ."' AND friend_user_id = '1' LIMIT 1");
-		
-		if ($db->No($s_rt1) == 0) {
-			$insertArr1 = array(
-				'user_id' => $last_user_id, 
-				'friend_user_id' => '1',
-			);
-			$db->Insert('roster', $insertArr1);
-		}
+		$s_rt = $db->Query("SELECT * FROM users WHERE user_id <> '" . $last_user_id . "'");
+		if ($db->No($s_rt) > 0) {
+			while($r_rt = $db->fetch($s_rt)) {
+				$insertArr1 = array(
+					'user_id' => $last_user_id, 
+					'friend_user_id' => $r_rt['user_id'],
+				);
+				$db->Insert('roster', $insertArr1);
 
-		// the user of the from_email add the user of to_email as friend
-		$s_rt2 = $db->Query("SELECT * FROM roster 
-				WHERE user_id = '1' AND friend_user_id = '" . $last_user_id ."' LIMIT 1");
-		if ($db->No($s_rt2) == 0) {
-			$insertArr2 = array(
-				'user_id' => '1', 
-				'friend_user_id' => $last_user_id,
-			);
-			$db->Insert('roster', $insertArr2);
+				$insertArr2 = array(
+					'user_id' => $r_rt['user_id'], 
+					'friend_user_id' => $last_user_id,
+				);
+				$db->Insert('roster', $insertArr2);
+			}
 		}
 
 		$jsonArr = array(
