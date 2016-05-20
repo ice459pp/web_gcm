@@ -4,7 +4,7 @@ class PushyAPI
     static public function sendPushNotification( $data, $ids )
     {
         // Your Pushy API key
-        $apiKey = 'dc5f7c7557aa951cc382e8e1052ec72454b307b111e371ea05f441ab565eb51b';
+        $apiKey = 'a169efee9245359ebd227cd9d9c2d28868d9aaa64ddcc4408f48b8e0440ba8c4';
 
         // Define URL to Pushy endpoint
         $url = 'https://api.pushy.me/push?api_key=' . $apiKey;
