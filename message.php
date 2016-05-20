@@ -1,8 +1,6 @@
 <?php
 
 require_once('db/db_config.php');
-require_once('libs/gcm/gcm.php');
-require_once('libs/gcm/push.php');
 
 /*
 post: to_email, from_email, content
@@ -18,7 +16,7 @@ $result = array();
 
 try {
 	$from_user_email = '';
-	$to_user_rid = '';
+	$to_user_rid = array();
 
 	if (empty($from_email) || empty($to_email) || empty($content)) {
 		throw new Exception("Parameter error");
@@ -39,11 +37,9 @@ try {
 		throw new Exception("The user of to_email does not exist");
 	} else {
 		$r_u2 = $db->fetch($s_u2);
-		$to_user_rid = $r_u2['gcm_registration_id'];
+		// For pushy api, this is an array parameter
+		$to_user_rid[] = $r_u2['gcm_registration_id'];
 	}
-
-	$gcm = new GCM();
-    $push = new Push();
 
     // data will be sended to the app client end.
     $data = array();
@@ -52,14 +48,8 @@ try {
     $data['from_email'] = $from_user_email;
     $data['created_at'] = date('Y-m-d G:i:s');
 
-    $push->setTitle("Google Cloud Messaging");
-    $push->setIsBackground(FALSE);
-    $push->setFlag(PUSH_FLAG_USER);
-    $push->setData($data);
-
-
-    // sending push message to single user
-    $gcm->send($to_user_rid, $push->getPush());
+	// Send it via Pushy API
+	PushyAPI::sendPushNotification($data, $to_user_rid);
 
     $msgInsert = array(
     	'rid' => $to_user_rid, 
