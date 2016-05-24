@@ -1,6 +1,7 @@
 <?php
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '1S3zivLQrS4TD95UJ');
+// define('DB_PASSWORD', 'appluco');
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'gcm_chat');
 

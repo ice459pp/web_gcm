@@ -1,8 +1,6 @@
 <?php
 require_once('functions.php');
-require_once('db/db_config.php');
-require_once('libs/gcm/gcm.php');
-require_once('libs/gcm/push.php');
+require_once('../db/db_config.php');
 
 /*
 post: username, userpwd, email
@@ -10,12 +8,24 @@ post: username, userpwd, email
 $username = isset($_POST['username'])? trim($_POST['username']): '';
 $userpwd = isset($_POST['userpwd'])? trim($_POST['userpwd']): '';
 $email = isset($_POST['email'])? trim($_POST['email']): '';
+$type = isset($_POST['type'])? trim($_POST['type']): '';
 $result = array();
 try {
-	if (!empty($username) && !empty($userpwd) && !empty($email)) {
+	if (!empty($username) && !empty($userpwd) && !empty($email) && !empty($type)) {
 
 		if (!isEmailValid($email)) {
 			throw new Exception("Email invalid");
+		}
+
+		switch ($type) {
+			case 'user':
+			case 'consultant':
+			case 'clerk':
+				break;
+			
+			default:
+				throw new Exception("Type invalid");
+				break;
 		}
 
 		// check the email whether has been used.
@@ -24,12 +34,12 @@ try {
 			throw new Exception("This email has been existed");
 		} 
 
-		// insert the user data and gcm registration id
 		$insertArr = array(
 			'name' => $username,
 			'pwd' => $userpwd, 
 			'email' => $email,
-			'gcm_registration_id' => 'initial', 
+			'type' => $type, 
+			'device_id' => 'initial', 
 		);
 		
 		$db->Insert('users', $insertArr);

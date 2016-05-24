@@ -1,29 +1,31 @@
 <?php
-require_once('db/db_config.php');
-require_once('libs/gcm/gcm.php');
-require_once('libs/gcm/push.php');
+require_once('../db/db_config.php');
 
 /*
-post: userpwd, email, gcm_registration_id
+post: userpwd, email, type, device_id
 */
 $email = isset($_POST['email'])? trim($_POST['email']): '';
 $userpwd = isset($_POST['userpwd'])? trim($_POST['userpwd']): '';
-$gcm_registration_id = isset($_POST['gcm_registration_id'])? trim($_POST['gcm_registration_id']): '';
+// type: user, consultant, clerk
+$type = isset($_POST['type'])? trim($_POST['type']): '';
+$device_id = isset($_POST['device_id'])? trim($_POST['device_id']): '';
+
 $result = array();
 try {
-	if (!empty($email) && !empty($userpwd) && !empty($gcm_registration_id)) {
+	if (!empty($email) && !empty($userpwd) && !empty($type)) {
 
 		// check the email whether has been used.
-		$s = $db->Query("SELECT * FROM users WHERE email = ? LIMIT 1", $email);
+		$s = $db->Query("SELECT * FROM users WHERE email = '" . $email . "' AND type = '" . $type . "' LIMIT 1");
 		if ($db->No($s) > 0) {
 			$user = $db->fetch($s, MYSQL_ASSOC);
 			$result = array(
+				'user_id' => $user['user_id'], 
 				'username' => $user['name'],
 				'email' => $user['email'], 
 			);
 
 			$updateArr = array(
-				'gcm_registration_id' => $gcm_registration_id,
+				'device_id' => $device_id,
 			);
 
 			$db->update("users", $updateArr, "user_id", $user['user_id']);
@@ -44,6 +46,7 @@ try {
 	}	
 } catch (Exception $e) {
 	$result = array(
+		'user_id' => '',
 		'username' => '',
 		'email' => '', 
 	);
