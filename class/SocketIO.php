@@ -4,7 +4,7 @@ class SocketIO
     static public function sendPushNotification($data, $user_id) {
         // 指明给谁推送，为空表示向所有在线用户推送
         $to_uid = $user_id;
-        $content = json_encode($data);
+        $content = $data['content'];
         $push_api_url = "http://twebdesign.appluco.com:2121/";
         $post_data = array(
            'type' => 'publish',
